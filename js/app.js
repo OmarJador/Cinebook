@@ -15,6 +15,10 @@
 // QUESTIONS : Quel identifiant correspond au catalogue ? Au prix total ?
 // TODO : créez ici des constantes explicites pour les éléments nécessaires.
 // ÉCRIVEZ VOTRE CODE ICI :
+const catalogue = document.getElementById("films-container");
+const total = document.getElementById("prix-total");
+const detailsFilm = document.getElementById("film-details");
+const seancesContainer = document.getElementById("seances-container");
 
 
 // ==================================================
@@ -26,6 +30,10 @@
 // PISTES : que faut-il remettre à zéro lorsqu'un autre film est choisi ?
 // TODO : déclarez trois variables avec des valeurs initiales adaptées.
 // ÉCRIVEZ VOTRE CODE ICI :
+let filmSelectionne = null;
+let seanceSelectionnee = null;
+let siegesSelectionnes = [];
+
 
 
 // ==================================================
@@ -40,6 +48,26 @@
 // MODÈLE : observez l'élément <article data-film-id="1"> dans index.html.
 // ÉCRIVEZ VOTRE CODE ICI :
 
+catalogue.innerHTML = "";
+
+films.forEach(film => {
+    const heures = Math.floor(film.duree/60)
+    const minutes = film.duree % 60
+
+    let carte = `
+      <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg" >
+        <div class="relative">
+            <img src="${film.affiche}" alt="${film.titre}" class="aspect-[2/3] w-full object-cover"><span class="absolute bottom-3 right-3 rounded-full bg-white/95 px-3 py-1 text-xs font-extrabold shadow-lg">${film.prix} DH</span>
+        </div>
+        <div class="p-4">
+        <p class="text-xs font-bold uppercase tracking-wider text-cine-red">${film.genre}</p><h3 class="mt-1 text-lg font-black">${film.titre}</h3><p class="mt-2 text-sm text-slate-500">${heures} h ${minutes} min</p><button data-film-id="${film.id}" type="button" class="mt-4 w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 font-extrabold text-slate-700">Choisir ce film</button>
+        </div>
+      </article>`
+
+  catalogue.innerHTML += carte;
+});
+
+
 
 // ==================================================
 // US02 - SÉLECTIONNER UN FILM
@@ -52,6 +80,38 @@
 // PISTE : un changement de film doit aussi réinitialiser séance et sièges.
 // MODÈLE : #film-details contient déjà un exemple de détail à reproduire.
 // ÉCRIVEZ VOTRE CODE ICI :
+catalogue.querySelectorAll("button").forEach(bouton => {
+  bouton.addEventListener("click", () => {
+    const id = bouton.dataset.filmId;
+    const film = films.find( film => film.id == id);
+    
+    
+    filmSelectionne = film;
+    seanceSelectionnee = null;
+    siegesSelectionnes = [];
+
+    catalogue.querySelectorAll("button").forEach(boutonFilm => {
+    boutonFilm.innerText = "Choisir ce film";
+    boutonFilm.className =
+    "mt-4 w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 font-extrabold text-slate-700";
+    });
+
+    bouton.innerText = "Sélectionné";
+    bouton.className =
+    "mt-4 w-full rounded-xl bg-cine-red px-4 py-3 font-extrabold text-white";
+    
+    const heures = Math.floor(filmSelectionne.duree / 60);
+    const minutes = filmSelectionne.duree % 60;
+
+
+    detailsFilm.innerHTML = `
+        <img src="${filmSelectionne.affiche}" alt="${filmSelectionne.titre}" class="aspect-[2/3] w-24 rounded-xl object-cover shadow-md">
+        <div><div class="flex flex-wrap items-center gap-2"><h3 class="text-xl font-black">${filmSelectionne.titre}</h3><span class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">${filmSelectionne.prix} DH</span></div><p class="mt-2 text-sm font-semibold text-slate-500">${filmSelectionne.genre} · ${heures} h ${minutes} min</p><p class="mt-3 leading-7 text-slate-600">${filmSelectionne.description}</p></div>
+    `;
+
+    afficherSeances(filmSelectionne);
+  });
+}); 
 
 
 // ==================================================
@@ -63,6 +123,20 @@
 // TODO : créer un bouton par séance et conserver son id dans data-seance-id.
 // MODÈLE : les trois boutons statiques de #seances-container montrent le HTML attendu.
 // ÉCRIVEZ VOTRE CODE ICI :
+function afficherSeances(){
+  seancesContainer.innerHTML = "";
+
+    filmSelectionne.seances.forEach(seance => {
+      const boutonSeance = document.createElement("button");
+      boutonSeance.type = "button";
+      boutonSeance.dataset.seanceId = seance.id;
+      boutonSeance.textContent = seance.horaire;
+      boutonSeance.className =
+      "rounded-xl border border-slate-300 bg-slate-50 px-5 py-3 font-bold text-slate-700";
+
+      seancesContainer.appendChild(boutonSeance);
+    });
+}
 
 
 // ==================================================
