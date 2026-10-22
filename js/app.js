@@ -16,7 +16,6 @@
 // TODO : créez ici des constantes explicites pour les éléments nécessaires.
 // ÉCRIVEZ VOTRE CODE ICI :
 const catalogue = document.getElementById("films-container");
-const total = document.getElementById("prix-total");
 const detailsFilm = document.getElementById("film-details");
 const seancesContainer = document.getElementById("seances-container");
 
@@ -51,10 +50,10 @@ let siegesSelectionnes = [];
 catalogue.innerHTML = "";
 
 films.forEach(film => {
-    const heures = Math.floor(film.duree/60)
-    const minutes = film.duree % 60
+  const heures = Math.floor(film.duree / 60)
+  const minutes = film.duree % 60
 
-    let carte = `
+  let carte = `
       <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg" >
         <div class="relative">
             <img src="${film.affiche}" alt="${film.titre}" class="aspect-[2/3] w-full object-cover"><span class="absolute bottom-3 right-3 rounded-full bg-white/95 px-3 py-1 text-xs font-extrabold shadow-lg">${film.prix} DH</span>
@@ -82,24 +81,27 @@ films.forEach(film => {
 // ÉCRIVEZ VOTRE CODE ICI :
 catalogue.querySelectorAll("button").forEach(bouton => {
   bouton.addEventListener("click", () => {
-    const id = bouton.dataset.filmId;
-    const film = films.find( film => film.id == id);
-    
-    
+    const id = Number(bouton.dataset.filmId);
+    const film = films.find(film => film.id === id);
+
+    if (!film) {
+      return;
+    }
+
     filmSelectionne = film;
     seanceSelectionnee = null;
     siegesSelectionnes = [];
 
     catalogue.querySelectorAll("button").forEach(boutonFilm => {
-    boutonFilm.innerText = "Choisir ce film";
-    boutonFilm.className =
-    "mt-4 w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 font-extrabold text-slate-700";
+      boutonFilm.innerText = "Choisir ce film";
+      boutonFilm.className =
+        "mt-4 w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 font-extrabold text-slate-700";
     });
 
     bouton.innerText = "Sélectionné";
     bouton.className =
-    "mt-4 w-full rounded-xl bg-cine-red px-4 py-3 font-extrabold text-white";
-    
+      "mt-4 w-full rounded-xl bg-cine-red px-4 py-3 font-extrabold text-white";
+
     const heures = Math.floor(filmSelectionne.duree / 60);
     const minutes = filmSelectionne.duree % 60;
 
@@ -110,8 +112,9 @@ catalogue.querySelectorAll("button").forEach(bouton => {
     `;
 
     afficherSeances(filmSelectionne);
+    activerSelectionSeance(filmSelectionne);
   });
-}); 
+});
 
 
 // ==================================================
@@ -123,19 +126,20 @@ catalogue.querySelectorAll("button").forEach(bouton => {
 // TODO : créer un bouton par séance et conserver son id dans data-seance-id.
 // MODÈLE : les trois boutons statiques de #seances-container montrent le HTML attendu.
 // ÉCRIVEZ VOTRE CODE ICI :
-function afficherSeances(){
+function afficherSeances(film) {
   seancesContainer.innerHTML = "";
 
-    filmSelectionne.seances.forEach(seance => {
-      const boutonSeance = document.createElement("button");
-      boutonSeance.type = "button";
-      boutonSeance.dataset.seanceId = seance.id;
-      boutonSeance.textContent = seance.horaire;
-      boutonSeance.className =
-      "rounded-xl border border-slate-300 bg-slate-50 px-5 py-3 font-bold text-slate-700";
-
-      seancesContainer.appendChild(boutonSeance);
-    });
+  film.seances.forEach(seance => {
+    seancesContainer.innerHTML += `
+      <button
+        type="button"
+        data-seance-id="${seance.id}"
+        class="rounded-xl border border-slate-300 bg-slate-50 px-5 py-3 font-bold text-slate-700"
+      >
+        ${seance.horaire}
+      </button>
+    `;
+  });
 }
 
 
@@ -147,6 +151,30 @@ function afficherSeances(){
 // QUESTIONS : Faut-il autoriser une séance qui n'appartient pas au film choisi ?
 // TODO : retrouver la séance, modifier l'état et réinitialiser les sièges choisis.
 // ÉCRIVEZ VOTRE CODE ICI :
+
+function activerSelectionSeance(film) {
+  seancesContainer.querySelectorAll("button").forEach(bouton => {
+    bouton.addEventListener("click", () => {
+      const id = Number(bouton.dataset.seanceId);
+      const seance = film.seances.find(seance => seance.id === id);
+
+      if (!seance) {
+        return;
+      }
+
+      seanceSelectionnee = seance;
+      siegesSelectionnes = [];
+
+      seancesContainer.querySelectorAll("button").forEach(boutons => {
+        boutons.className =
+          "rounded-xl border border-slate-300 bg-slate-50 px-5 py-3 font-bold text-slate-700";
+      });
+
+      bouton.className =
+        "rounded-xl bg-cine-red px-5 py-3 font-bold text-white shadow-md";
+    });
+  });
+}
 
 
 // ==================================================
@@ -160,7 +188,6 @@ function afficherSeances(){
 // MODÈLE : #sieges-container contient les 30 sièges statiques et leurs classes Tailwind.
 // ÉCRIVEZ VOTRE CODE ICI :
 
-
 // ==================================================
 // US06 - SÉLECTIONNER ET DÉSÉLECTIONNER DES SIÈGES
 // ==================================================
@@ -169,7 +196,6 @@ function afficherSeances(){
 // QUESTIONS : Comment empêcher le clic sur une place occupée ?
 // TODO : écouter chaque siège disponible et actualiser son état visuel.
 // ÉCRIVEZ VOTRE CODE ICI :
-
 
 // ==================================================
 // US07 - CALCULER LE TOTAL ET METTRE À JOUR LE RÉCAPITULATIF
@@ -180,7 +206,6 @@ function afficherSeances(){
 // TODO : écrire une fonction appelée après chaque changement de sélection.
 // MODÈLE : le récapitulatif HTML affiche des exemples de valeurs déjà remplies.
 // ÉCRIVEZ VOTRE CODE ICI :
-
 
 // ==================================================
 // US08 - CONFIRMER LA RÉSERVATION
