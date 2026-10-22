@@ -15,6 +15,7 @@
 // QUESTIONS : Quel identifiant correspond au catalogue ? Au prix total ?
 // TODO : créez ici des constantes explicites pour les éléments nécessaires.
 // ÉCRIVEZ VOTRE CODE ICI :
+
 const catalogue = document.getElementById("films-container");
 const detailsFilm = document.getElementById("film-details");
 const seancesContainer = document.getElementById("seances-container");
@@ -29,9 +30,13 @@ const seancesContainer = document.getElementById("seances-container");
 // PISTES : que faut-il remettre à zéro lorsqu'un autre film est choisi ?
 // TODO : déclarez trois variables avec des valeurs initiales adaptées.
 // ÉCRIVEZ VOTRE CODE ICI :
+
 let filmSelectionne = null;
 let seanceSelectionnee = null;
 let siegesSelectionnes = [];
+
+detailsFilm.innerHTML = "";
+seancesContainer.innerHTML = "";
 
 
 
@@ -79,6 +84,7 @@ films.forEach(film => {
 // PISTE : un changement de film doit aussi réinitialiser séance et sièges.
 // MODÈLE : #film-details contient déjà un exemple de détail à reproduire.
 // ÉCRIVEZ VOTRE CODE ICI :
+
 catalogue.querySelectorAll("button").forEach(bouton => {
   bouton.addEventListener("click", () => {
     const id = Number(bouton.dataset.filmId);
@@ -126,6 +132,7 @@ catalogue.querySelectorAll("button").forEach(bouton => {
 // TODO : créer un bouton par séance et conserver son id dans data-seance-id.
 // MODÈLE : les trois boutons statiques de #seances-container montrent le HTML attendu.
 // ÉCRIVEZ VOTRE CODE ICI :
+
 function afficherSeances(film) {
   seancesContainer.innerHTML = "";
 
